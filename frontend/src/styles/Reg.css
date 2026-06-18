@@ -1,0 +1,268 @@
+/* ==========================================================================
+   1. ОБЩИЕ СТИЛИ И ЦЕНТРИРОВАНИЕ ОКНА (ФЛЕКС-ОБЁРТКА)
+   ========================================================================== */
+.menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+/* Компактная белая карточка (уменьшена в 2 раза) */
+.auth-card {
+  background-color: #ffffff;
+  padding: 35px 45px;        /* Было 70px 90px */
+  border-radius: 16px;       /* Было 24px */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06); /* Мягкая аккуратная тень */
+  text-align: center;
+  width: 100%;
+  max-width: 400px;          /* Было 800px */
+  box-sizing: border-box;
+}
+
+/* Компактный заголовок для всех страниц */
+.auth-title, 
+.profile-title {
+  font-size: 1.8rem;         /* Было 3rem */
+  margin: 0 0 25px 0;        /* Сократили отступ снизу */
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+/* ==========================================================================
+   2. СТИЛИ ФОРМЫ И ПОЛЕЙ ВВОДА (ВХОД И РЕГИСТРАЦИЯ)
+   ========================================================================== */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;                 /* Компактное расстояние между инпутами (было 24px) */
+  width: 100%;
+}
+
+/* Поля ввода */
+.auth-form input {
+  font-size: 1rem;           /* Стандартный комфортный шрифт (было 1.4rem) */
+  padding: 12px 16px;        /* Уменьшили высоту инпутов */
+  width: 100%;
+  max-width: 100%;           
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;        /* Было 12px */
+  outline: none;
+  transition: all 0.2s ease; /* Плавная анимация фокуса сохранена */
+  box-sizing: border-box;
+}
+
+/* Эффект при клике на инпут (СОХРАНЕН) */
+.auth-form input:focus {
+  background-color: #ffffff;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+
+/* ==========================================================================
+   3. СТИЛИ КНОПОК И ССЫЛОК
+   ========================================================================== */
+/* Кнопка отправки (Вход / Зарегистрироваться) */
+.submit-btn {
+  width: 100%;
+  max-width: 100%;
+  font-size: 1rem;           /* Было 1.4rem */
+  font-weight: 600;
+  padding: 12px 20px;        /* Уменьшили высоту кнопки */
+  color: #fff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Градиент сохранен */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: all 0.2s ease; /* Анимация наведения сохранена */
+  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
+}
+
+/* Эффекты наведения для кнопки отправки (СОХРАНЕНЫ) */
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.3);
+  filter: brightness(1.05);
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Текст и ссылки под формой */
+.auth-footer-text {
+  font-size: 0.95rem;        /* Было 1.15rem */
+  color: #64748b;
+  margin-top: 20px;          /* Было 35px */
+  margin-bottom: 0;
+}
+
+.auth-link {
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.auth-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   4. СТИЛИ ДЛЯ ЛИЧНОГО КАБИНЕТА
+   ========================================================================== */
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Обновленная круглая аватарка пользователя */
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0 auto 15px auto; /* Исправление центрирования */
+  box-shadow: 0 6px 15px rgba(118, 75, 162, 0.2);
+  position: relative;        /* Важно для позиционирования оверлея внутри */
+  overflow: hidden;          /* Чтобы оверлей не вылезал за границы круга */
+}
+
+/* Настройки для интерактивной аватарки */
+.editable-avatar {
+  cursor: pointer;
+}
+
+/* Картинка внутри аватарки */
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Тёмный полупрозрачный слой при наведении */
+.avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Затемнение */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;                           /* Изначально скрыт */
+  transition: opacity 0.2s ease;        /* Плавное появление */
+}
+
+.avatar-overlay span {
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Показываем слой при наведении мыши на аватарку */
+.profile-avatar:hover .avatar-overlay {
+  opacity: 1;
+}
+
+
+/* Контейнер для строк с данными */
+.profile-info-box {
+  width: 100%;
+  max-width: 100%;
+  background-color: #f8fafc;
+  border-radius: 10px;       /* Было 14px */
+  padding: 5px 18px;         /* Было 10px 25px */
+  margin-bottom: 25px;       /* Было 40px */
+  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+}
+
+/* Строки (Имя, Email) */
+.info-row {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 10px 0;           /* Было 15px */
+}
+
+.info-row:not(:last-child) {
+  border-bottom: 1px solid #e2e8f0; /* Разделитель сохранен */
+}
+
+.info-label {
+  font-size: 0.75rem;        /* Было 0.95rem */
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+
+.info-value {
+  font-size: 1.05rem;        /* Было 1.3rem */
+  color: #1a202c;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* Кнопка выхода */
+.logout-btn {
+  width: 100%;
+  max-width: 100%;
+  font-size: 1rem;           /* Было 1.3rem */
+  font-weight: 600;
+  padding: 12px 20px;        /* Было 16px 30px */
+  color: #fff;
+  background-color: #e53e3e; /* Красный цвет сохранен */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(229, 62, 62, 0.15);
+}
+
+.logout-btn:hover {
+  background-color: #c53030;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(229, 62, 62, 0.25);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}
+
+/* Лоадер */
+.loader {
+  font-size: 1.1rem;
+  color: #4a5568;
+  padding: 20px;
+}
