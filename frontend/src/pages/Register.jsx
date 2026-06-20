@@ -27,6 +27,11 @@ export default function Register() {
   const submit = async (e) => {
     e.preventDefault();
 
+    if (form.password.length < 6) {
+      toast.error("Пароль должен быть минимум 6 символов");
+      return;
+    }
+
     if (form.password !== form.confirmPassword) {
       toast.error("Пароли не совпадают");
       return;
@@ -41,7 +46,7 @@ export default function Register() {
         password: form.password
       });
 
-      console.log("REGISTER RESPONSE:", res.data);
+      console.log("REGISTER SUCCESS");
 
       if (res.data?.access && res.data?.refresh) {
         setToken(res.data.access, res.data.refresh);

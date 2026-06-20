@@ -3,6 +3,10 @@ export const setToken = (access, refresh) => {
   localStorage.setItem("refresh", refresh);
 };
 
+export const setAccessToken = (access) => {
+  localStorage.setItem("access", access);
+};
+
 export const getToken = () => {
   return localStorage.getItem("access");
 };

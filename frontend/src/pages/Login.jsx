@@ -38,7 +38,7 @@ export default function Login() {
         password: form.password
       });
 
-      console.log("LOGIN RESPONSE:", res.data);
+      console.log("LOGIN SUCCESS");
 
       if (res.data?.access && res.data?.refresh) {
         setToken(res.data.access, res.data.refresh);

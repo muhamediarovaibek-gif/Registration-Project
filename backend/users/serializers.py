@@ -1,52 +1,56 @@
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.db import IntegrityError
 
 User = get_user_model()
-
 
 # =========================
 # REGISTER
 # =========================
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, min_length=6)
 
     class Meta:
         model = User
         fields = ["username", "email", "password"]
 
     def create(self, validated_data):
-        return User.objects.create_user(
-            username=validated_data["username"],
-            email=validated_data["email"],
-            password=validated_data["password"]
-        )
-
+        try:
+            user = User.objects.create_user(
+                username=validated_data["username"],
+                email=validated_data["email"],
+                password=validated_data["password"]
+            )
+            return user
+        except IntegrityError:
+            raise serializers.ValidationError({
+                "error": "User with this username or email already exists"
+            })
 
 # =========================
-# LOGIN (USERNAME)
+# LOGIN (JWT)
 # =========================
 
-class MyTokenObtainPairSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
-
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        username = attrs.get("username")
-        password = attrs.get("password")
+        data = super().validate(attrs)
 
-        user = authenticate(username=username, password=password)
+        data["username"] = self.user.username
+        data["email"] = self.user.email
+        data["id"] = self.user.id
 
-        if not user:
-            raise serializers.ValidationError("Invalid username or password")
+        return data
 
-        refresh = RefreshToken.for_user(user)
+# =========================
+# AVATAR
+# =========================
 
-        return {
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-            "username": user.username,
-            "email": user.email,
-            "id": user.id,
-        }
+class AvatarSerializer(serializers.Serializer):
+    avatar = serializers.ImageField()
+
+    def validate_avatar(self, value):
+        if value.size > 2 * 1024 * 1024:
+            raise serializers.ValidationError("Max 2MB")
+        return value

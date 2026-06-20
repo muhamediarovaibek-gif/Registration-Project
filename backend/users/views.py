@@ -4,32 +4,25 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework import status
 
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from .serializers import RegisterSerializer
+from .serializers import (
+    RegisterSerializer,
+    MyTokenObtainPairSerializer,
+    AvatarSerializer
+)
+
+from .models import Profile
 
 User = get_user_model()
 
 
 # =========================
-# LOGIN (USERNAME + JWT)
+# LOGIN
 # =========================
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-
-        # добавляем полезные данные в ответ
-        data["username"] = self.user.username
-        data["email"] = self.user.email
-        data["id"] = self.user.id
-
-        return data
-
-
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
@@ -37,7 +30,6 @@ class MyTokenObtainPairView(TokenObtainPairView):
 # =========================
 # REGISTER
 # =========================
-
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
@@ -56,23 +48,22 @@ class RegisterView(generics.CreateAPIView):
             "username": user.username,
             "email": user.email,
             "id": user.id,
-        })
+        }, status=status.HTTP_201_CREATED)
 
 
 # =========================
-# ME (current user)
+# ME (FIXED)
 # =========================
-
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        avatar = None
+        profile, _ = Profile.objects.get_or_create(user=request.user)
 
-        if hasattr(request.user, "profile") and request.user.profile.avatar:
-            avatar = request.build_absolute_uri(
-                request.user.profile.avatar.url
-            )
+        avatar = (
+            request.build_absolute_uri(profile.avatar.url)
+            if profile.avatar else None
+        )
 
         return Response({
             "id": request.user.id,
@@ -85,7 +76,6 @@ class MeView(APIView):
 # =========================
 # USERS (ADMIN ONLY)
 # =========================
-
 class UsersListView(APIView):
     permission_classes = [IsAdminUser]
 
@@ -101,23 +91,21 @@ class UsersListView(APIView):
             for u in users
         ])
 
+
+# =========================
+# UPDATE AVATAR
+# =========================
 class UpdateAvatarView(APIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request):
-        profile = request.user.profile
+        serializer = AvatarSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if "avatar" not in request.FILES:
-            return Response(
-                {"error": "Файл не выбран"},
-                status=400
-            )
-
-        profile.avatar = request.FILES["avatar"]
+        profile, _ = Profile.objects.get_or_create(user=request.user)
+        profile.avatar = serializer.validated_data["avatar"]
         profile.save()
 
         return Response({
-            "avatar": request.build_absolute_uri(
-                profile.avatar.url
-            )
+            "avatar": request.build_absolute_uri(profile.avatar.url)
         })
