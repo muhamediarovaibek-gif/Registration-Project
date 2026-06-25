@@ -8,5 +8,7 @@ services:
 
   frontend:
     build: ./frontend
+    env_file:
+      - ./frontend/.env
     ports:
       - "5173:8080"
